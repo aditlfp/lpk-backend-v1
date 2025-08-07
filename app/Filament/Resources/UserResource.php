@@ -54,7 +54,18 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email_verified_at')
+                    ->placeholder('Not Verified')
                     ->dateTime()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('roles.name')
+                    ->badge()
+                    ->separator(', ')
+                    ->color(fn (string $state): string => match (true) {
+                        str_contains($state, 'admin') => 'danger',
+                        str_contains($state, 'user') => 'success',
+                        $state === 'Editor' => 'warning',
+                        default => 'gray',
+                    })
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

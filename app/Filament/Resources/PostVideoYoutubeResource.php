@@ -7,6 +7,7 @@ use App\Filament\Resources\PostVideoYoutubeResource\RelationManagers;
 use App\Models\PostVideoYoutube;
 use Filament\Forms;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
@@ -14,6 +15,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\HtmlString;
 
 use function App\Utils\extractYoutubeId;
 use function App\Utils\getYoutubeDuration;
@@ -30,8 +32,12 @@ class PostVideoYoutubeResource extends Resource
     {
         return $form
             ->schema([
+                Placeholder::make('Instruction ( Petunjuk )')
+                    ->content(new HtmlString('<img src="' . asset('images/contoh_upload_video.jpg') . '" class="rounded-md shadow-md w-full max-w-4xl" />'))
+                    ->columnSpanFull(),
                 Forms\Components\FileUpload::make('thumbnail')
-                    ->required(),
+                    ->required()
+                    ->columnSpanFull(),
                 Grid::make(3)->schema([
                     Forms\Components\TextInput::make('url_video')
                         ->required()
@@ -68,14 +74,17 @@ class PostVideoYoutubeResource extends Resource
                 Tables\Columns\TextColumn::make('thumbnail')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('url_video')
+                    ->placeholder('https://www.youtube.com/')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('title')
+                    ->placeholder('Title Video')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('category')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('tag')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('duration')
+                    ->placeholder('00:00:00')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

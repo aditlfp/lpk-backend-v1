@@ -62,11 +62,14 @@ class MainHeroResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('c_image'),
+                Tables\Columns\ImageColumn::make('c_image')
+                    ->label('Background Image'),
                 Tables\Columns\ImageColumn::make('main_logo'),
                 Tables\Columns\TextColumn::make('text_logo')
+                    ->placeholder('Enter a title logo / text logo')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('title')
+                    ->placeholder('Enter a title of page')
                     ->searchable(),
                 Tables\Columns\ImageColumn::make('collab_logo'),
                 Tables\Columns\IconColumn::make('is_pinned')
