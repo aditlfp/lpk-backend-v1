@@ -51,4 +51,10 @@ class User extends Authenticatable implements FilamentUser
             'password' => 'hashed',
         ];
     }
+    
+    public function canAccessFilament(): bool
+    {
+        // Izinkan login jika user memiliki permission khusus (contoh: 'access_filament')
+        return $this->can('access_filament');
+    }
 }

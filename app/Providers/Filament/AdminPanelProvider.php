@@ -22,8 +22,10 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin;
 use Rupadana\ApiService\ApiServicePlugin;
 
+
 class AdminPanelProvider extends PanelProvider
 {
+    
     public function panel(Panel $panel): Panel
     {
         return $panel
