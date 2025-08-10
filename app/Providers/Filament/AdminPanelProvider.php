@@ -3,11 +3,13 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Auth\LoginByName;
+use App\Filament\Pages\Docs;
 use Filament\Http\Middleware\Authenticate;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -25,7 +27,7 @@ use Rupadana\ApiService\ApiServicePlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
-    
+
     public function panel(Panel $panel): Panel
     {
         return $panel

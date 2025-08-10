@@ -6,12 +6,14 @@ use App\Filament\Resources\GalleryMediaResource\Pages;
 use App\Filament\Resources\GalleryMediaResource\RelationManagers;
 use App\Models\GalleryMedia;
 use Filament\Forms;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\HtmlString;
 
 class GalleryMediaResource extends Resource
 {
@@ -27,6 +29,9 @@ class GalleryMediaResource extends Resource
     {
         return $form
             ->schema([
+                Placeholder::make('Instruction ( Petunjuk )')
+                    ->content(new HtmlString('<img src="' . asset('images/contoh_upload_gallery.jpg') . '" class="rounded-md shadow-md w-full max-w-4xl" />'))
+                    ->columnSpanFull(),
                 Forms\Components\FileUpload::make('bg_image')
                     ->label('Background Image')
                     ->multiple()

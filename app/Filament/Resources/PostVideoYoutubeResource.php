@@ -71,8 +71,7 @@ class PostVideoYoutubeResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('thumbnail')
-                    ->searchable(),
+                Tables\Columns\ImageColumn::make('thumbnail'),
                 Tables\Columns\TextColumn::make('url_video')
                     ->placeholder('https://www.youtube.com/')
                     ->searchable(),
