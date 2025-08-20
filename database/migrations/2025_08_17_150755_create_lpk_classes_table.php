@@ -15,9 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('image');
             $table->string('title');
-            $table->string('desc');
+            $table->text('desc');
             $table->string('waktu_pendidikan')->default("0 Bulan Pendidikan");
-            $table->string('bersertifikat')->default('tidak');
+            $table->boolean('bersertifikat')->default(0);
+            $table->string('url');
+            $table->boolean('active')->nullable()->default(false);
             $table->timestamps();
         });
     }

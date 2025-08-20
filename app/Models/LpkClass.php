@@ -12,7 +12,9 @@ class LpkClass extends Model
         'title',
         'desc',
         'waktu_pendidikan',
-        'bersertifikat'
+        'bersertifikat',
+        'url',
+        'active'
    ];
 
    public static function booted()

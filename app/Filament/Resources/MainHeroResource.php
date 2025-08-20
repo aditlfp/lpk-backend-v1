@@ -3,17 +3,14 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\MainHeroResource\Pages;
-use App\Filament\Resources\MainHeroResource\RelationManagers;
 use App\Models\MainHero;
 use Filament\Forms;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\HtmlString;
 
 class MainHeroResource extends Resource
@@ -22,39 +19,74 @@ class MainHeroResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-photo';
 
-    protected static ?string $navigationGroup = "Master Data";
+    protected static ?string $navigationGroup = 'Manage View Asahikari';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Placeholder::make('Instruction ( Petunjuk )')
-                    ->content(new HtmlString('<img src="' . asset('images/contoh_main_hero.jpg') . '" class="rounded-md shadow-md w-full max-w-4xl" />'))
-                    ->columnSpanFull(),
-                Forms\Components\FileUpload::make('c_image')
-                    ->label('Background Image')
-                    ->image()
-                    ->required(),
-                Forms\Components\FileUpload::make('main_logo')
-                    ->required()
-                    ->image(),
-                Forms\Components\TextInput::make('text_logo')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('title')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('desc')
-                    ->columnSpanFull(),
-                Grid::make(2)->schema([
-                    Forms\Components\FileUpload::make('collab_logo')
-                        ->label('Collaboration Logo')
-                        ->multiple()
-                        ->columnSpanFull()
-                        ->image(),
-                ]),
-                Forms\Components\Toggle::make('is_pinned')
-                    ->required()
+                Forms\Components\Section::make('Instructions')
+                    ->description('Contoh tampilan Main Hero di halaman depan.')
+                    ->schema([
+                        Forms\Components\Placeholder::make('image_preview')
+                            ->label('')
+                            ->content(new HtmlString('<img src="' . asset('images/contoh_main_hero.jpg') . '" alt="Contoh Tampilan" class="rounded-md shadow-md w-full max-w-4xl" />')),
+                    ]),
+
+                Forms\Components\Section::make('Content Details')
+                    ->columns(2)
+                    ->schema([
+                        Forms\Components\FileUpload::make('c_image')
+                            ->label('Background Image')
+                            ->image()
+                            ->required()
+                            ->columnSpanFull(),
+                        Forms\Components\FileUpload::make('main_logo')
+                            ->label('Main Logo')
+                            ->image(),
+                        Forms\Components\TextInput::make('text_logo')
+                            ->label('Text for Logo')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('title')
+                            ->required()
+                            ->maxLength(255)
+                            ->columnSpanFull(),
+                        Forms\Components\Textarea::make('desc')
+                            ->label('Description')
+                            ->columnSpanFull(),
+                    ]),
+
+                Forms\Components\Section::make('Collaboration')
+                    ->schema([
+                        Forms\Components\FileUpload::make('collab_logo')
+                            ->label('Collaboration Logos')
+                            ->multiple()
+                            ->image(),
+                    ]),
+
+                Forms\Components\Section::make('Status')
+                    ->schema([
+                        Forms\Components\Toggle::make('is_pinned')
+                            ->label('Active')
+                            ->helperText('Hanya satu item yang bisa aktif pada satu waktu.')
+                            ->rule(function ($record): \Closure {
+                                return function (string $attribute, $value, \Closure $fail) use ($record) {
+                                    if (!$value) {
+                                        return;
+                                    }
+
+                                    $query = MainHero::where('is_pinned', true);
+                                    if ($record) {
+                                        $query->where('id', '!=', $record->id);
+                                    }
+
+                                    if ($query->exists()) {
+                                        $fail('Sudah ada item lain yang aktif. Harap nonaktifkan item tersebut terlebih dahulu.');
+                                    }
+                                };
+                            }),
+                    ]),
             ]);
     }
 
@@ -63,23 +95,48 @@ class MainHeroResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('c_image')
-                    ->label('Background Image'),
-                Tables\Columns\ImageColumn::make('main_logo'),
-                Tables\Columns\TextColumn::make('text_logo')
-                    ->placeholder('Enter a title logo / text logo')
-                    ->searchable(),
+                    ->label('Background'),
                 Tables\Columns\TextColumn::make('title')
-                    ->placeholder('Enter a title of page')
-                    ->searchable(),
-                Tables\Columns\ImageColumn::make('collab_logo'),
-                Tables\Columns\IconColumn::make('is_pinned')
-                    ->boolean(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->searchable()
+                    ->description(fn (MainHero $record): string => $record->text_logo),
+
+                // --- BEST PRACTICE: ToggleColumn dengan validasi ---
+                Tables\Columns\ToggleColumn::make('is_pinned')
+                    ->label('Active')
+                    ->disabled(function ($record) {
+                        // Nonaktifkan toggle jika item ini tidak aktif TAPI sudah ada item lain yang aktif
+                        if (!$record->is_pinned) {
+                            return MainHero::where('is_pinned', true)->exists();
+                        }
+                        return false;
+                    })
+                    ->updateStateUsing(function ($record, $state) {
+                        // Jika mencoba mengaktifkan (state jadi true)
+                        if ($state) {
+                            // Cek apakah sudah ada yang aktif
+                            $activeExists = MainHero::where('is_pinned', true)
+                                ->where('id', '!=', $record->id)
+                                ->exists();
+
+                            if ($activeExists) {
+                                Notification::make()
+                                    ->title('Aksi Gagal')
+                                    ->body('Item lain sudah aktif. Harap nonaktifkan terlebih dahulu.')
+                                    ->danger()
+                                    ->send();
+                                // Batalkan aksi
+                                $record->refresh();
+                                return;
+                            }
+                        }
+                        // Lanjutkan update jika validasi lolos
+                        $record->is_pinned = $state;
+                        $record->save();
+                    }),
+                // --------------------------------------------------
+
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->dateTime('d M Y, H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
@@ -94,10 +151,10 @@ class MainHeroResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ])->emptyStateHeading('Data belum tersedia')  // Heading text
-            ->emptyStateDescription('Silakan tambahkan data untuk mulai menampilkan.')  // Optional description
-            ->emptyStateIcon('heroicon-o-information-circle');  // Optional custom icon
-
+            ])
+            ->emptyStateHeading('Data belum tersedia')
+            ->emptyStateDescription('Silakan tambahkan data untuk mulai menampilkan.')
+            ->emptyStateIcon('heroicon-o-information-circle');
     }
 
     public static function getRelations(): array

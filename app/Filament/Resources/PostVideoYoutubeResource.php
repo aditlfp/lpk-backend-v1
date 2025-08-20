@@ -26,7 +26,7 @@ class PostVideoYoutubeResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-paper-clip';
 
-    protected static ?string $navigationGroup = "Master Data";
+    protected static ?string $navigationGroup = 'Manage View Asahikari';
 
     public static function form(Form $form): Form
     {

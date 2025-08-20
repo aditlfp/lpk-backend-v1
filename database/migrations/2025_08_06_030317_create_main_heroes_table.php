@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('main_heroes', function (Blueprint $table) {
             $table->id();
             $table->string('c_image');
-            $table->string('main_logo');
+            $table->string('main_logo')->nullable();
             $table->string('text_logo');
             $table->string('title');
             $table->text('desc')->nullable();

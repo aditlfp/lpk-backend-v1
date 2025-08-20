@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\MainHeroResource\Pages;
+namespace App\Filament\Resources\LpkClassResource\Pages;
 
-use App\Filament\Resources\MainHeroResource;
+use App\Filament\Resources\LpkClassResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
-class ListMainHeroes extends ListRecords
+class ListLpkClasses extends ListRecords
 {
-    protected static string $resource = MainHeroResource::class;
+    protected static string $resource = LpkClassResource::class;
 
     protected function getHeaderActions(): array
     {
@@ -17,7 +17,6 @@ class ListMainHeroes extends ListRecords
         ];
     }
 
-
     /**
      * use this class to add SubHeading On Index Page
      *
@@ -25,6 +24,7 @@ class ListMainHeroes extends ListRecords
      */
     public function getSubheading(): ?string
     {
-        return 'Use This To Displays the Main Image on asahikarimulya.co.id (Max: 1 active).';
+        return 'Use This To Displays the LPK class on asahikarimulya.co.id (Max: 4 active).';
     }
+
 }

@@ -23,7 +23,7 @@ class GalleryMediaResource extends Resource
 
     protected static ?string $navigationLabel = "Gallery Media";
 
-    protected static ?string $navigationGroup = 'Master Data';
+    protected static ?string $navigationGroup = 'Manage View Asahikari';
 
     public static function form(Form $form): Form
     {
