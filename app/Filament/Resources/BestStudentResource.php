@@ -5,7 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\BestStudentResource\Pages;
 use App\Filament\Resources\BestStudentResource\RelationManagers;
 use App\Models\BestStudent;
-use App\Models\SetBestStudent;
+use App\Models\ActiveKandidat;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
@@ -20,61 +20,62 @@ class BestStudentResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
 
-    protected static ?string $navigationLabel = "Best Candidate";
+    protected static ?string $navigationLabel = "Students";
 
-    protected static ?string $navigationGroup = 'Manage View Asahikari';
+    protected static ?string $navigationGroup = 'Manage Student/PL/Sensei';
 
-        public static function getEloquentQuery(): EloquentBuilder
+    public static function getEloquentQuery(): EloquentBuilder
     {
-        // Do NOT turn this into Query\Builder (no ->toBase(), no DB::table())
         $query = parent::getEloquentQuery();
-
-        // Optional sanity check while debugging:
-        // if (! method_exists($query->getModel(), 'scopeInActiveProgress')) {
-        //     throw new \RuntimeException('Resource is not using App\Models\BestStudent');
-        // }
-
-        return $query->inActiveProgress(); // ✅ scope now available
-    }
-
-    public static function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                //
-            ]);
+        return $query->inActiveProgress();
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-
+                Tables\Columns\TextColumn::make('no')
+                    ->label('No')
+                    ->state(fn ($record, $rowLoop) => $rowLoop->iteration)
+                    ->sortable(true)
+                    ->searchable(false),
+                Tables\Columns\ImageColumn::make('Document')
+                    ->label('Foto')
+                    ->placeholder("Foto Tidak Ditemukan")
+                    ->getStateUsing(fn ($record) => $record->document
+                        ? 'https://recruitment.savanait.com/' . $record->document->file_path
+                        : null)
+                    ->checkFileExistence(false)
+                    ->extraImgAttributes(['loading' => 'lazy'])
+                    ->size(60)
+                    ->circular(),
                 Tables\Columns\TextColumn::make('nama_lengkap')
                     ->label('Nama')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('umur')
+                    ->label('Umur')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('status_progress')
+                    ->label('Progress'),
                 Tables\Columns\ToggleColumn::make('best_student')
                     ->label('Kandidat Terbaik')
                     ->getStateUsing(fn (BestStudent $record) =>
-                        SetBestStudent::where('best_student_id', $record->id)
-                            ->value('is_best') ?? false
+                        ActiveKandidat::where('best_student_id', $record->id)
+                            ->value('best_student_id') ?? false
                     )
                     ->updateStateUsing(function (bool $state, BestStudent $record) {
-                        // Update the record's state
-                        // $record->best_student = $state;
-                        // $record->save();
 
-                        SetBestStudent::updateOrCreate(
-                            ['best_student_id' => $record->id],
-                            [
-                                'is_best' => $state,
-                            ]
-                        );
+                        if($state)
+                        {
+                            $status = 'Kandidat Terbaik Dinyalakan';
+                            ActiveKandidat::create([
+                                'best_student_id' => $record->id
+                            ]);
+                        }else{
+                            $status = 'Kandidat Terbaik Di Nonaktifkan';
+                            ActiveKandidat::where('best_student_id', $record->id)->delete();
+                        }
 
-                        // Prepare the notification message
-                        $status = $state ? 'Kandidat Terbaik Dinyalakan' : 'Kandidat Terbaik Di Nonaktifkan';
-
-                        // Send the notification
                         Notification::make()
                             ->title("Data Diupdate : {$status}")
                             ->success()
@@ -100,8 +101,11 @@ class BestStudentResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])->modifyQueryUsing(function (EloquentBuilder $query) {
-                $query->inActiveProgress(); // ✅ also ok here
-            });
+                $query->inActiveProgress();
+            })
+            ->emptyStateHeading('Data belum tersedia')
+            ->emptyStateDescription('Silakan tambahkan data untuk mulai menampilkan.')
+            ->emptyStateIcon('heroicon-o-information-circle');
     }
 
     public static function getRelations(): array

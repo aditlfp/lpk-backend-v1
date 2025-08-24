@@ -70,6 +70,11 @@ class LpkClassResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('no')
+                    ->label('No')
+                    ->state(fn ($record, $rowLoop) => $rowLoop->iteration)
+                    ->sortable(true)
+                    ->searchable(false),
                 Tables\Columns\ImageColumn::make('image'),
                 Tables\Columns\TextColumn::make('title')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('waktu_pendidikan'),
@@ -143,7 +148,10 @@ class LpkClassResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->emptyStateHeading('Data belum tersedia')
+            ->emptyStateDescription('Silakan tambahkan data untuk mulai menampilkan.')
+            ->emptyStateIcon('heroicon-o-information-circle');
     }
 
     public static function getRelations(): array

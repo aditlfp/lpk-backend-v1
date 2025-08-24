@@ -9,8 +9,8 @@ class Comments extends Model
 {
     protected $fillable = [
         'image_foto',
+        'username',
         'comment',
-        'name_comment',
         'location',
         'rating'
     ];

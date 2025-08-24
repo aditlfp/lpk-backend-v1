@@ -71,6 +71,11 @@ class PostVideoYoutubeResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('no')
+                    ->label('No')
+                    ->state(fn ($record, $rowLoop) => $rowLoop->iteration)
+                    ->sortable(true)
+                    ->searchable(false),
                 Tables\Columns\ImageColumn::make('thumbnail'),
                 Tables\Columns\TextColumn::make('url_video')
                     ->placeholder('https://www.youtube.com/')
@@ -105,7 +110,10 @@ class PostVideoYoutubeResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->emptyStateHeading('Data belum tersedia')
+            ->emptyStateDescription('Silakan tambahkan data untuk mulai menampilkan.')
+            ->emptyStateIcon('heroicon-o-information-circle');
     }
 
     public static function getRelations(): array

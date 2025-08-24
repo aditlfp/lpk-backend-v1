@@ -16,11 +16,9 @@ use Illuminate\Database\Eloquent\Builder;
 class ListBestStudents extends ListRecords
 {
     protected static string $resource = BestStudentResource::class;
-    // In app/Filament/Resources/BestStudentResource/Pages/ListBestStudents.php
 
 protected function getEloquentQuery(): Builder
 {
-    // For debugging, let's try a simple, direct query.
     return BestStudent::query()->where('status_progress', 'Penempatan');
 }
     protected function getHeaderActions(): array
@@ -28,5 +26,10 @@ protected function getEloquentQuery(): Builder
         return [
            //
         ];
+    }
+
+    public function getSubheading(): ?string
+    {
+        return 'Use This To Displays the Best Student on asahikarimulya.co.id. ( Section : Kandidat Terbaik )';
     }
 }

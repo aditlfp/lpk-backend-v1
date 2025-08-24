@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Carbon\Carbon;
 
 class BestStudent extends Model
 {
@@ -31,5 +32,15 @@ class BestStudent extends Model
     public function SetBestStudent()
     {
         return $this->hasOne(SetBestStudent::class);
+    }
+
+    public function getUmurAttribute()
+    {
+        return $this->tanggal_lahir != null ? Carbon::parse($this->tanggal_lahir)->age . " (Tahun)" : "Umur Tidak Diketahui";
+    }
+
+    public function Document()
+    {
+        return $this->belongsTo(Dokumen::class, 'id', 'owner_id')->where('owner_type', 'siswa')->where('jenis_dokumen', 'Pas Foto Formal');
     }
 }

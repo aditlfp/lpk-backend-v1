@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cache;
 
 class PostVideoYoutube extends Model
 {
@@ -19,6 +20,10 @@ class PostVideoYoutube extends Model
 
      public static function booted()
     {
+        static::created(fn () => Cache::forget('post_video_youtube_trend'));
+        static::updated(fn () => Cache::forget('post_video_youtube_trend'));
+        static::deleted(fn () => Cache::forget('post_video_youtube_trend'));
+
         static::updating(function ($record) {
             if ($record->isDirty('thumbnail')) {
                 Storage::disk('public')->delete($record->getOriginal('thumbnail'));

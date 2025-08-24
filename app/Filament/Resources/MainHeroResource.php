@@ -94,6 +94,11 @@ class MainHeroResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('no')
+                    ->label('No')
+                    ->state(fn ($record, $rowLoop) => $rowLoop->iteration)
+                    ->sortable(true)
+                    ->searchable(false),
                 Tables\Columns\ImageColumn::make('c_image')
                     ->label('Background'),
                 Tables\Columns\TextColumn::make('title')

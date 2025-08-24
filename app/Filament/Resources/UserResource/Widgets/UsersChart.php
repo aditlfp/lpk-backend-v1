@@ -7,6 +7,8 @@ use App\Models\User;
 use Flowframe\Trend\Trend;
 use Illuminate\Support\Carbon;
 use Flowframe\Trend\TrendValue;
+use Illuminate\Support\Facades\Cache;
+
 
 class UsersChart extends ApexChartWidget
 {
@@ -40,10 +42,12 @@ class UsersChart extends ApexChartWidget
             return [];
         }
 
-        $data = Trend::model(User::class)
+        $data = Cache::remember('user_widget_data', now()->addMinutes(10), function () {
+            return Trend::model(User::class)
             ->between(start: now()->subMonth(), end: now())
             ->perDay()
             ->count();
+        });
 
         return [
             'chart' => [

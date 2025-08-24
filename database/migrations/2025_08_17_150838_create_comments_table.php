@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
             $table->string('image_foto')->nullable();
-            $table->string('comment');
-            $table->string('name_comment');
+            $table->string('username');
+            $table->text('comment');
             $table->string('location');
             $table->integer('rating')->default(0);
             $table->timestamps();

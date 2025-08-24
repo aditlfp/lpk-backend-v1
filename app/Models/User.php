@@ -11,6 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Support\Facades\Cache;
 
 
 class User extends Authenticatable implements FilamentUser
@@ -51,7 +52,14 @@ class User extends Authenticatable implements FilamentUser
             'password' => 'hashed',
         ];
     }
-    
+
+    protected static function booted()
+    {
+        static::created(fn () => Cache::forget('user_widget_data'));
+        static::updated(fn () => Cache::forget('user_widget_data'));
+        static::deleted(fn () => Cache::forget('user_widget_data'));
+    }
+
     public function canAccessFilament(): bool
     {
         // Izinkan login jika user memiliki permission khusus (contoh: 'access_filament')

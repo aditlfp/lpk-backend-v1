@@ -4,6 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use App\Models\BestStudent;
+use App\Models\FieldOfficiers;
+use App\Models\Sensei;
 
 return new class extends Migration
 {
@@ -12,10 +14,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('set_best_students', function (Blueprint $table) {
+        Schema::create('active_kandidats', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(BestStudent::class);
-            $table->boolean('is_best')->nullable()->default(false);
+            $table->foreignIdFor(BestStudent::class)->nullable();
+            $table->foreignIdFor(FieldOfficiers::class)->nullable();
+            $table->foreignIdFor(Sensei::class)->nullable();
             $table->timestamps();
         });
     }
@@ -25,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('set_best_students');
+        Schema::dropIfExists('active_kandidats');
     }
 };
