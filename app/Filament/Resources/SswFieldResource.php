@@ -43,7 +43,7 @@ class SswFieldResource extends Resource
                     ->label('subtitle_japan (opsional)')
                     ->placeholder('(航空業)')
                     ->maxLength(255),
-                Forms\Components\TextArea::make('desc')
+                Forms\Components\Textarea::make('desc')
                     ->label('Description')
                     ->required()
                     ->placeholder('Deskripsi Pekerjaan')
