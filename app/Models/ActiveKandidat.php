@@ -7,19 +7,20 @@ use Illuminate\Database\Eloquent\Model;
 class ActiveKandidat extends Model
 {
     protected $guarded = [];
+    protected $connection = 'mysql';
 
     public function BestStudent()
     {
-        return $this->belongsTo(BestStudent::class);
+        return $this->belongsTo(BestStudent::class, 'best_student_id', 'id');
     }
 
     public function PetugasLap()
     {
-        return $this->belongsTo(PetugasLapangan::class);
+        return $this->belongsTo(PetugasLapangan::class, 'field_officiers_id', 'id');
     }
 
-    public function FieldOfficier()
+    public function Sensei()
     {
-        return $this->belongsTo(FieldOfficiers::class);
+        return $this->belongsTo(Sensei::class, 'sensei_id', 'id');
     }
 }

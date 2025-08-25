@@ -65,16 +65,24 @@ class BestStudentResource extends Resource
                     )
                     ->updateStateUsing(function (bool $state, BestStudent $record) {
 
-                        if($state)
-                        {
-                            $status = 'Kandidat Terbaik Dinyalakan';
-                            ActiveKandidat::create([
-                                'best_student_id' => $record->id
-                            ]);
-                        }else{
-                            $status = 'Kandidat Terbaik Di Nonaktifkan';
+                        if ($state) {
+                            // Cari row kosong khusus sensei_id
+                            $existing = ActiveKandidat::whereNull('best_student_id')->first();
+
+                            if ($existing) {
+                                $existing->update(['best_student_id' => $record->id]);
+                            } else {
+                                ActiveKandidat::create([
+                                    'best_student_id' => $record->id,
+                                ]);
+                            }
+                        } else {
+                            // Toggle OFF → hapus baris yg memang sensei ini
                             ActiveKandidat::where('best_student_id', $record->id)->delete();
                         }
+
+                        $status = $state ? 'Aktif' : 'Non Aktif';
+
 
                         Notification::make()
                             ->title("Data Diupdate : {$status}")

@@ -73,16 +73,23 @@ class SenseiResource extends Resource
                     )
                     ->updateStateUsing(function (bool $state, Sensei $record) {
 
-                        if($state)
-                        {
-                            $status = 'Kandidat Terbaik Dinyalakan';
-                            ActiveKandidat::create([
-                                'sensei_id' => $record->id
-                            ]);
-                        }else{
-                            $status = 'Kandidat Terbaik Di Nonaktifkan';
+                        if ($state) {
+                            // Cari row kosong khusus sensei_id
+                            $existing = ActiveKandidat::whereNull('sensei_id')->first();
+
+                            if ($existing) {
+                                $existing->update(['sensei_id' => $record->id]);
+                            } else {
+                                ActiveKandidat::create([
+                                    'sensei_id' => $record->id,
+                                ]);
+                            }
+                        } else {
+                            // Toggle OFF → hapus baris yg memang sensei ini
                             ActiveKandidat::where('sensei_id', $record->id)->delete();
                         }
+
+                        $status = $state ? 'Aktif' : 'Non Aktif';
 
                         Notification::make()
                             ->title("Data Diupdate : {$status}")

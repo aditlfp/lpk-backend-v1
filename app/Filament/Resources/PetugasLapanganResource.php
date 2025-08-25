@@ -73,16 +73,24 @@ class PetugasLapanganResource extends Resource
                     )
                     ->updateStateUsing(function (bool $state, PetugasLapangan $record) {
 
-                        if($state)
-                        {
-                            $status = 'Kandidat Terbaik Dinyalakan';
-                            ActiveKandidat::create([
-                                'field_officiers_id' => $record->id
-                            ]);
-                        }else{
-                            $status = 'Kandidat Terbaik Di Nonaktifkan';
-                            ActiveKandidat::where('field_officiers_id', $record->id)->delete();
+
+                        if ($state) {
+                             // Cari row kosong khusus sensei_id
+                            $existing = ActiveKandidat::whereNull('field_officiers_id')->first();
+
+                            if ($existing) {
+                                $existing->update(['field_officiers_id' => $record->id]);
+                            } else {
+                                ActiveKandidat::create([
+                                    'field_officiers_id' => $record->id,
+                                ]);
+                            }
+                        } else {
+                             ActiveKandidat::where('field_officiers_id', $record->id)->delete();
                         }
+
+                        $status = $state ? 'Aktif' : 'Non Aktif';
+
 
                         Notification::make()
                             ->title("Data Diupdate : {$status}")
