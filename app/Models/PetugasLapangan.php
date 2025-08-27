@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 class PetugasLapangan extends Model
 {
     protected $connection = 'mysqlRecruitmen';
-    protected $table = 'recruitmen.calon_petugas_lapangan';
+    protected $table = 'recruitmen_v2.calon_petugas_lapangan';
 
     public function scopeInActiveProgress(Builder $query): Builder
     {

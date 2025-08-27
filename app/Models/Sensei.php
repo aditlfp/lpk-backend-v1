@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 class Sensei extends Model
 {
     protected $connection = 'mysqlRecruitmen';
-    protected $table = 'recruitmen.calon_sensei';
+    protected $table = 'recruitmen_v2.calon_sensei';
 
     public function scopeInActiveProgress(Builder $query): Builder
     {

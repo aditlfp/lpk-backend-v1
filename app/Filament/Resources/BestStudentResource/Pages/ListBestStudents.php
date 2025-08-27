@@ -17,10 +17,11 @@ class ListBestStudents extends ListRecords
 {
     protected static string $resource = BestStudentResource::class;
 
-protected function getEloquentQuery(): Builder
-{
-    return BestStudent::query()->where('status_progress', 'Penempatan');
-}
+    protected function getEloquentQuery(): Builder
+    {
+        return BestStudent::query()->where('status_progress', 'Penempatan');
+    }
+    
     protected function getHeaderActions(): array
     {
         return [

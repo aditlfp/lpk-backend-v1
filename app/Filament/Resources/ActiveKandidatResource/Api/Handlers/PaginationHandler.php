@@ -13,7 +13,7 @@ class PaginationHandler extends Handlers {
 
 
     /**
-     * List of ActiveKandidat
+     * List of {{ model }}
      *
      * @param Request $request
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection

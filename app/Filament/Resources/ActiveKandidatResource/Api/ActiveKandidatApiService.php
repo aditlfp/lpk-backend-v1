@@ -19,6 +19,5 @@ class ActiveKandidatApiService extends ApiService
             Handlers\PaginationHandler::class,
             Handlers\DetailHandler::class
         ];
-
     }
 }

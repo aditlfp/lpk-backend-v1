@@ -12,6 +12,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Rupadana\ApiService\ApiService;
+use Rupadana\ApiService\Http\Handlers;
 
 class ActiveKandidatResource extends Resource
 {
@@ -22,7 +24,6 @@ class ActiveKandidatResource extends Resource
     protected static ?string $navigationLabel = 'Current Show Kandidat';
 
     protected static ?string $navigationGroup = 'Manage Student/PL/Sensei';
-
 
     public static function table(Table $table): Table
     {
@@ -57,6 +58,25 @@ class ActiveKandidatResource extends Resource
             ])
             ->bulkActions([
                 //
+            ]);
+    }
+
+    public static function getApiService(): ?ApiService
+    {
+        return ApiService::make()
+            ->handlers([
+                Handlers\IndexHandler::make()->with([
+                    'BestStudent', // Must match public function BestStudent()
+                    'PetugasLap',  // Must match public function PetugasLap()
+                    'Sensei',
+                    'PetugasLap.document'      // Must match public function Sensei()
+                ]),
+                Handlers\ShowHandler::make()->with([
+                    'BestStudent',
+                    'PetugasLap',
+                    'Sensei',
+                    'PetugasLap.document'
+                ]),
             ]);
     }
 

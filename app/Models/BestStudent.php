@@ -11,7 +11,7 @@ class BestStudent extends Model
 {
     use HasFactory;
     protected $connection = 'mysqlRecruitmen';
-    protected $table = 'recruitmen.calon_siswa';
+    protected $table = 'recruitmen_v2.calon_siswa';
     protected $fillable = ['calon_siswa_id', 'nama_lengkap'];
 
     public function scopeInActiveProgress(Builder $query): Builder
