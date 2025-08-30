@@ -1,13 +1,13 @@
 <?php
-namespace App\Filament\Resources\CommentResource\Api\Transformers;
+namespace App\Filament\Resources\TestimonisResource\Api\Transformers;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Models\Comments;
+use App\Models\Testimonis;
 
 /**
- * @property Comment $resource
+ * @property Testimonis $resource
  */
-class CommentTransformer extends JsonResource
+class TestimonisTransformer extends JsonResource
 {
 
     /**

@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\CommentResource\Pages;
-use App\Filament\Resources\CommentResource\RelationManagers;
-use App\Models\Comments;
+use App\Filament\Resources\TestimonisResource\Pages;
+use App\Filament\Resources\TestimonisResource\RelationManagers;
+use App\Models\Testimonis;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,17 +13,26 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class CommentResource extends Resource
+class TestimonisResource extends Resource
 {
-    protected static ?string $model = Comments::class;
+    protected static ?string $model = Testimonis::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-ellipsis';
 
     protected static ?string $navigationGroup = 'Manage View Asahikari';
 
+    protected static ?string $navigationLabel = 'Comments / Testimoni';
+
+    protected static ?string $pluralModelLabel = 'Comments / Testimoni';
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
     public static function form(Form $form): Form
     {
-        return $form
+         return $form
             ->schema([
                 Forms\Components\FileUpload::make('image_foto')
                     ->label('Profile User'),
@@ -94,9 +103,9 @@ class CommentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListComments::route('/'),
-            'create' => Pages\CreateComment::route('/create'),
-            'edit' => Pages\EditComment::route('/{record}/edit'),
+            'index' => Pages\ListTestimonis::route('/'),
+            'create' => Pages\CreateTestimonis::route('/create'),
+            'edit' => Pages\EditTestimonis::route('/{record}/edit'),
         ];
     }
 }

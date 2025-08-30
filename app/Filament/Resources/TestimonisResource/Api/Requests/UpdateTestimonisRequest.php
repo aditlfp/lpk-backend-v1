@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Filament\Resources\CommentResource\Api\Requests;
+namespace App\Filament\Resources\TestimonisResource\Api\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateCommentRequest extends FormRequest
+class UpdateTestimonisRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,11 +22,7 @@ class UpdateCommentRequest extends FormRequest
     public function rules(): array
     {
         return [
-			'image_foto' => 'required',
-			'username' => 'required',
-			'comment' => 'required|string',
-			'location' => 'required',
-			'rating' => 'required'
+
 		];
     }
 }

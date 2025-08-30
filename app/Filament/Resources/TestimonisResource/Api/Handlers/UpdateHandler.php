@@ -1,14 +1,14 @@
 <?php
-namespace App\Filament\Resources\CommentResource\Api\Handlers;
+namespace App\Filament\Resources\TestimonisResource\Api\Handlers;
 
 use Illuminate\Http\Request;
 use Rupadana\ApiService\Http\Handlers;
-use App\Filament\Resources\CommentResource;
-use App\Filament\Resources\CommentResource\Api\Requests\UpdateCommentRequest;
+use App\Filament\Resources\TestimonisResource;
+use App\Filament\Resources\TestimonisResource\Api\Requests\UpdateTestimonisRequest;
 
 class UpdateHandler extends Handlers {
     public static string | null $uri = '/{id}';
-    public static string | null $resource = CommentResource::class;
+    public static string | null $resource = TestimonisResource::class;
 
     public static function getMethod()
     {
@@ -21,12 +21,12 @@ class UpdateHandler extends Handlers {
 
 
     /**
-     * Update Comment
+     * Update Testimonis
      *
-     * @param UpdateCommentRequest $request
+     * @param UpdateTestimonisRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function handler(UpdateCommentRequest $request)
+    public function handler(UpdateTestimonisRequest $request)
     {
         $id = $request->route('id');
 

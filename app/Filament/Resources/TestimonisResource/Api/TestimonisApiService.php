@@ -1,14 +1,14 @@
 <?php
-namespace App\Filament\Resources\CommentResource\Api;
+namespace App\Filament\Resources\TestimonisResource\Api;
 
 use Rupadana\ApiService\ApiService;
-use App\Filament\Resources\CommentResource;
+use App\Filament\Resources\TestimonisResource;
 use Illuminate\Routing\Router;
 
 
-class CommentApiService extends ApiService
+class TestimonisApiService extends ApiService
 {
-    protected static string | null $resource = CommentResource::class;
+    protected static string | null $resource = TestimonisResource::class;
 
     public static function handlers() : array
     {

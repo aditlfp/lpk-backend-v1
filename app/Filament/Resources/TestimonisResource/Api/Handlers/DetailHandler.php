@@ -1,25 +1,25 @@
 <?php
 
-namespace App\Filament\Resources\CommentResource\Api\Handlers;
+namespace App\Filament\Resources\TestimonisResource\Api\Handlers;
 
 use App\Filament\Resources\SettingResource;
-use App\Filament\Resources\CommentResource;
+use App\Filament\Resources\TestimonisResource;
 use Rupadana\ApiService\Http\Handlers;
 use Spatie\QueryBuilder\QueryBuilder;
 use Illuminate\Http\Request;
-use App\Filament\Resources\CommentResource\Api\Transformers\CommentTransformer;
+use App\Filament\Resources\TestimonisResource\Api\Transformers\TestimonisTransformer;
 
 class DetailHandler extends Handlers
 {
     public static string | null $uri = '/{id}';
-    public static string | null $resource = CommentResource::class;
+    public static string | null $resource = TestimonisResource::class;
 
 
     /**
-     * Show Comment
+     * Show Testimonis
      *
      * @param Request $request
-     * @return CommentTransformer
+     * @return TestimonisTransformer
      */
     public function handler(Request $request)
     {
@@ -34,6 +34,6 @@ class DetailHandler extends Handlers
 
         if (!$query) return static::sendNotFoundResponse();
 
-        return new CommentTransformer($query);
+        return new TestimonisTransformer($query);
     }
 }

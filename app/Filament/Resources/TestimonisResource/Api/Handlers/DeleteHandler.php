@@ -1,13 +1,13 @@
 <?php
-namespace App\Filament\Resources\CommentResource\Api\Handlers;
+namespace App\Filament\Resources\TestimonisResource\Api\Handlers;
 
 use Illuminate\Http\Request;
 use Rupadana\ApiService\Http\Handlers;
-use App\Filament\Resources\CommentResource;
+use App\Filament\Resources\TestimonisResource;
 
 class DeleteHandler extends Handlers {
     public static string | null $uri = '/{id}';
-    public static string | null $resource = CommentResource::class;
+    public static string | null $resource = TestimonisResource::class;
 
     public static function getMethod()
     {
@@ -19,7 +19,7 @@ class DeleteHandler extends Handlers {
     }
 
     /**
-     * Delete Comment
+     * Delete Testimonis
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
