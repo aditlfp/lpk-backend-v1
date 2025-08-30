@@ -9,4 +9,9 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateSswField extends CreateRecord
 {
     protected static string $resource = SswFieldResource::class;
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }

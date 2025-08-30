@@ -9,4 +9,9 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateTestimonis extends CreateRecord
 {
     protected static string $resource = TestimonisResource::class;
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }
