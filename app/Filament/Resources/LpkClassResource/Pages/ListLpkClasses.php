@@ -24,7 +24,7 @@ class ListLpkClasses extends ListRecords
      */
     public function getSubheading(): ?string
     {
-        return 'Use This To Displays the LPK class on asahikarimulya.co.id (Max: 4 active).';
+        return 'Use This To Displays the 4 latest active LPK classes for the front page.';
     }
 
 }

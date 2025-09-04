@@ -6,6 +6,7 @@ use App\Filament\Resources\LpkClassResource\Pages;
 use App\Filament\Resources\LpkClassResource\RelationManagers;
 use App\Models\LpkClass;
 use Filament\Forms;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
@@ -30,14 +31,26 @@ class LpkClassResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\FileUpload::make('image')->image(),
-                Forms\Components\TextInput::make('title')->required(),
-                Forms\Components\TextInput::make('waktu_pendidikan'),
-                Forms\Components\Select::make('bersertifikat')
-                ->options(['1' => 'Ya', '0' => 'Tidak'])
-                ->default('0'),
-                Forms\Components\TextInput::make('url')->required(),
-                Forms\Components\Textarea::make('desc'),
+                Section::make([
+                    Forms\Components\FileUpload::make('image')->image()->downloadable(),
+                    Forms\Components\TextInput::make('title')
+                        ->placeholder('Judul/Nama Kelas...')
+                        ->required(),
+                    Forms\Components\TextInput::make('waktu_pendidikan')
+                        ->placeholder('Contoh: 1 - 6 Bulan...'),
+                    Forms\Components\Select::make('bersertifikat')
+                    ->options(['1' => 'Ya', '0' => 'Tidak'])
+                    ->default('0'),
+                    Forms\Components\TextInput::make('url')
+                        ->label('Link/URL (opsional)')
+                        ->placeholder('Masukkan Link Kelas anda jika ada...'),
+                    Forms\Components\TextInput::make('rating')
+                        ->placeholder('1-5')
+                        ->numeric(),
+                    Forms\Components\Textarea::make('desc')
+                        ->placeholder('Deskripsikan Kelas anda...'),    
+
+                ]),
                 // --- VALIDASI PADA FORM ---
                 Forms\Components\Toggle::make('active')
                     ->required()
@@ -55,12 +68,6 @@ class LpkClassResource extends Resource
                                 $query->where('id', '!=', $record->id);
                             }
 
-                            // Hitung jumlah yang sudah aktif
-                            $activeCount = $query->count();
-
-                            if ($activeCount >= 4) {
-                                $fail('Batas maksimal (4) kelas aktif telah tercapai. Anda tidak bisa mengaktifkan kelas ini.');
-                            }
                         };
                     }),
             ]);
@@ -92,42 +99,27 @@ class LpkClassResource extends Resource
                             ->title("Data Diupdate : {$status}")
                             ->success()
                             ->send();
-                    }),
-                Tables\Columns\TextColumn::make('url'),
-                 // --- MODIFIKASI BEST PRACTICE ---
-                Tables\Columns\ToggleColumn::make('active')
-                    ->disabled(function ($record) {
-                        // Jika record ini belum aktif, periksa jumlah total yang sudah aktif.
-                        if (!$record->active) {
-                            // Hitung jumlah record yang sudah aktif.
-                            $activeCount = LpkClass::where('active', true)->count();
-                            // Jika sudah ada 4 atau lebih yang aktif, nonaktifkan toggle ini.
-                            return $activeCount >= 4;
-                        }
-                        // Jika record ini sudah aktif, biarkan toggle tetap bisa digunakan (untuk menonaktifkan).
-                        return false;
                     })
-                    ->updateStateUsing(function ($record, $state) {
-                        // Logika ini tetap sebagai pengaman di sisi server,
-                        // meskipun UI sudah dinonaktifkan.
-                        $activeCount = LpkClass::where('active', true)->count();
-
-                        if ($activeCount >= 4 && $state) {
-                            Notification::make()
-                                ->title('Gagal Mengaktifkan')
-                                ->body('Batas maksimal (4) kelas aktif telah tercapai.')
-                                ->danger()
-                                ->send();
-
-                            // Mencegah update dan mengembalikan toggle ke posisi semula.
-                            $record->refresh();
-                            return;
-                        }
-
+                    ->alignCenter(),
+                Tables\Columns\ViewColumn::make('rating')
+                        ->view('tables.columns.star-rating')
+                        ->alignCenter(),
+                Tables\Columns\ToggleColumn::make('active')
+                   ->updateStateUsing(function ($record, $state) {
+                        // Update the record's state
                         $record->active = $state;
                         $record->save();
-                    }),
-                // -------------------------
+
+                        // Prepare the notification message
+                        $status = $state ? 'Active' : 'Non Active';
+
+                        // Send the notification
+                        Notification::make()
+                            ->title("Data Diupdate : {$status}")
+                            ->success()
+                            ->send();
+                    })
+                    ->alignCenter(),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
